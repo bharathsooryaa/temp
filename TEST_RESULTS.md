@@ -564,3 +564,17 @@ then explicit instruction to use the credential in `.env` and remove that file.
 - Ruff and Git diff whitespace checks pass. No code changed in this publication
   step; earlier implementation tests remain applicable.
 - Commit and remote-push verification outcomes follow after execution.
+
+Publication outcome (not a success):
+
+- Inspected 94 historical blobs: zero credential-pattern flags; no raw matched
+  values printed. Prepared isolated source commit
+  10db3589facd25ff25bdcea8167ad488403fea83, preserving existing history.
+- HTTPS push failed (exit 128): configured VS Code askpass socket unavailable;
+  GitHub returned no anonymous write access. No GitHub CLI/token available.
+- Existing SSH agent failed authentication (exit 255, permission denied publickey).
+  Host trust was verified against GitHub's official Ed25519 fingerprint using
+  an isolated temporary known-hosts file; no global SSH configuration changed.
+- GitHub plugin discovery found an available, unconnected integration; suggested
+  it rather than requesting a pasted token or reading private key/token stores.
+- No push success claimed. Authentication is the remaining prerequisite.

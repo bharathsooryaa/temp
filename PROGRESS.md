@@ -316,3 +316,13 @@ advertised no branches on inspection. Publication uses an isolated temporary
 checkout to preserve protected workspace .git and the existing origin remote.
 Source and history checks exclude credential files and generated/cache artifacts.
 Push success is recorded after remote verification.
+
+Publication attempt: prepared source commit 10db3589facd25ff25bdcea8167ad488403fea83
+in /tmp/bgsw-publish-ekspced3. HTTPS push failed: existing VS Code credential socket
+unavailable and GitHub refused anonymous writes. GitHub CLI is not installed and
+no GitHub token is configured in the process environment. Existing SSH-agent
+authentication also failed with publickey rejection, after strict verification
+against GitHub's official host fingerprint in a temporary host-key file. No remote
+write succeeded. A GitHub integration was suggested for supported authentication.
+Current status: push blocked on GitHub authentication; setup launchers remain
+pending and protected workspace Git metadata is unchanged.
