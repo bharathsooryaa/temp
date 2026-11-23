@@ -123,11 +123,21 @@ def build_guardian_agent(model: BaseChatModel, ctx: AgentContext, blocked: list[
     return agent
 
 
-def run_agents(ctx: AgentContext, cfg: ModelConfig, mode: str) -> dict:
-    """mode: 'full' (discovery, detection, analysis) or 'analyze' (existing stored run)."""
+def run_agents(
+    ctx: AgentContext,
+    cfg: ModelConfig,
+    mode: str,
+    *,
+    model: BaseChatModel | None = None,
+) -> dict:
+    """mode: 'full' (discovery, detection, analysis) or 'analyze' (existing stored run).
+
+    ``model`` lets tests inject a fixture; production always passes None and builds the live
+    provider model from ``cfg``.
+    """
     os.environ.setdefault("LANGSMITH_TRACING", "false")  # no tracing upload unless opted in
     os.environ.setdefault("LANGCHAIN_TRACING_V2", "false")
-    model = build_model(cfg)
+    model = model or build_model(cfg)
     blocked: list[str] = []
     agent = build_guardian_agent(model, ctx, blocked)
     result = agent.invoke(
