@@ -1,0 +1,19 @@
+{
+  "images": [
+    {
+      "image": "docker.io/library/node:12-alpine",
+      "platform": "linux/amd64",
+      "index_digest": "sha256:d4b15b3d48f42059a15bd659be60afe21762aae9d6cbea6f124440895c27db68",
+      "manifest_digest": "sha256:4517380049fc3c9aacceae7764fcf3500354b0ac8a47e4afb35b5bbeb75b9498",
+      "layers": [
+        "sha256:df9b9388f04ad6279a7410b85cedfdcb2208c0a003da7ab5613af71079148139",
+        "sha256:3bf6d738020517f4622814e8c21db4b4aaa78ae7cab4e4f872c11696886c6285",
+        "sha256:7939e601ee5e4737cf7fdb6d1dfe31ca4c2697109290462f694710761450aef0",
+        "sha256:31f0fb9de071269230cb0f786012ae4e81d26e489b1fe922e57b5201e6bc9ab0"
+      ],
+      "bytes": 30083968,
+      "oci_layout": "cache/images/library_node_12-alpine",
+      "fetched_at": "2026-11-23T09:10:40+00:00"
+    }
+  ]
+}

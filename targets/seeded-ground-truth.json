@@ -1,0 +1,97 @@
+{
+  "target": "nodegoat-seeded",
+  "base_target": "nodegoat",
+  "base_commit": "c5cb68a7084e4ae7dcc60e6a98768720a81841e8",
+  "seeded_commit": "bb57ba2eb0afab519005f83805f71bcee7db73d3",
+  "note": "Seeded (S3-S8) plus pre-existing real issues in the unmodified app (R1-R4).",
+  "expected": [
+    {
+      "id": "S3",
+      "scenario": "typosquat",
+      "type": "typosquat",
+      "component": "expresss"
+    },
+    {
+      "id": "S4",
+      "scenario": "suspicious install script",
+      "type": "install_script",
+      "component": "guardian-seed-postinstall"
+    },
+    {
+      "id": "S5a",
+      "scenario": "lockfile registry host changed",
+      "type": "lockfile_change",
+      "component": "marked",
+      "rule": "GR-LOCK-001"
+    },
+    {
+      "id": "S5b",
+      "scenario": "integrity changed without version change",
+      "type": "lockfile_change",
+      "component": "ms",
+      "rule": "GR-LOCK-004"
+    },
+    {
+      "id": "S6a",
+      "scenario": "transitive additions from a minor bump",
+      "type": "unexpected_dependency",
+      "component": "guardian-seed-dep-a"
+    },
+    {
+      "id": "S6b",
+      "scenario": "transitive additions from a minor bump",
+      "type": "unexpected_dependency",
+      "component": "guardian-seed-dep-b"
+    },
+    {
+      "id": "S6c",
+      "scenario": "transitive additions from a minor bump",
+      "type": "unexpected_dependency",
+      "component": "guardian-seed-dep-c"
+    },
+    {
+      "id": "S7a",
+      "scenario": "base image uses latest",
+      "type": "untrusted_image",
+      "component": "node",
+      "rule": "GR-IMG-002"
+    },
+    {
+      "id": "S7b",
+      "scenario": "final stage runs as root",
+      "type": "misconfiguration",
+      "rule": "GR-IMG-003"
+    },
+    {
+      "id": "S8",
+      "scenario": "pull_request_target with checkout",
+      "type": "unpinned_ci",
+      "rule": "GR-CI-002"
+    },
+    {
+      "id": "R1",
+      "scenario": "real direct CVE",
+      "type": "vulnerable_direct",
+      "component": "marked"
+    },
+    {
+      "id": "R2",
+      "scenario": "real transitive CVE",
+      "type": "vulnerable_transitive",
+      "component": "bson"
+    },
+    {
+      "id": "R3",
+      "scenario": "real malicious package",
+      "type": "malicious_package",
+      "component": "fsevents"
+    },
+    {
+      "id": "R4",
+      "scenario": "real tag-pinned action",
+      "type": "unpinned_ci",
+      "component": "actions/checkout",
+      "rule": "GR-CI-001"
+    }
+  ]
+}

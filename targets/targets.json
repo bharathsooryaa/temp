@@ -1,0 +1,36 @@
+{
+  "targets": [
+    {
+      "name": "nodegoat",
+      "repo": "https://github.com/OWASP/NodeGoat.git",
+      "commit": "c5cb68a7084e4ae7dcc60e6a98768720a81841e8",
+      "commit_date": "2023-06-21T07:23:23Z",
+      "license": "Apache-2.0",
+      "ecosystem": "npm",
+      "lockfile": "package-lock.json",
+      "lockfile_version": 2,
+      "resolved_packages": {
+        "total": 1479,
+        "dev": 1016,
+        "production": 463
+      },
+      "path": "targets/nodegoat",
+      "read_only": true,
+      "selected": "2026-11-23 as the default recommendation; the user had not chosen yet. Swap by re-cloning."
+    },
+    {
+      "name": "nodegoat-seeded",
+      "repo": "local fork of targets/nodegoat (no remote)",
+      "commit": "bb57ba2eb0afab519005f83805f71bcee7db73d3",
+      "base_target": "nodegoat",
+      "base_commit": "c5cb68a7084e4ae7dcc60e6a98768720a81841e8",
+      "branch": "seeded-anomalies",
+      "synthetic": true,
+      "license": "Apache-2.0",
+      "ecosystem": "npm",
+      "lockfile": "package-lock.json",
+      "path": "targets/nodegoat-seeded",
+      "read_only": true
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "generated": "2026-11-23",
+  "min_release_age_days": 7,
+  "platform": "linux-amd64",
+  "tools": [
+    {
+      "name": "syft",
+      "version": "v1.57.2",
+      "repo": "anchore/syft",
+      "published_at": "2026-11-16T20:05:41Z",
+      "url": "https://github.com/anchore/syft/releases/download/v1.57.2/syft_1.57.2_linux_amd64.tar.gz",
+      "sha256": "ad92bd3ec1b94a3df01d4d0aec199afa9c42b72e86da436ff5f837914d32706b",
+      "sha256_sources": [
+        "checksum_file",
+        "github_api_digest"
+      ],
+      "kind": "tar.gz",
+      "member": "syft",
+      "size": 31486443
+    },
+    {
+      "name": "grype",
+      "version": "v0.121.3",
+      "repo": "anchore/grype",
+      "published_at": "2026-11-09T15:17:25Z",
+      "url": "https://github.com/anchore/grype/releases/download/v0.121.3/grype_0.121.3_linux_amd64.tar.gz",
+      "sha256": "e9da18cc1429e786722e32161288103600efffd8e483c90761f90485bd1bec85",
+      "sha256_sources": [
+        "checksum_file",
+        "github_api_digest"
+      ],
+      "kind": "tar.gz",
+      "member": "grype",
+      "size": 32643999
+    },
+    {
+      "name": "osv-scanner",
+      "version": "v2.7.1",
+      "repo": "google/osv-scanner",
+      "published_at": "2026-11-09T04:15:04Z",
+      "url": "https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64",
+      "sha256": "fb7dab19a8bd9bbe5c3189f09d4b7ee1820c9553a23bac202648a56efd2f6ee8",
+      "sha256_sources": [
+        "checksum_file",
+        "github_api_digest"
+      ],
+      "kind": "binary",
+      "member": null,
+      "size": 58187936
+    },
+    {
+      "name": "trivy",
+      "version": "v0.76.2",
+      "repo": "aquasecurity/trivy",
+      "published_at": "2026-11-05T12:50:25Z",
+      "url": "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_Linux-64bit.tar.gz",
+      "sha256": "bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf",
+      "sha256_sources": [
+        "checksum_file",
+        "github_api_digest"
+      ],
+      "kind": "tar.gz",
+      "member": "trivy",
+      "size": 52714130
+    },
+    {
+      "name": "hadolint",
+      "version": "v2.15.1",
+      "repo": "hadolint/hadolint",
+      "published_at": "2026-07-31T10:13:06Z",
+      "url": "https://github.com/hadolint/hadolint/releases/download/v2.15.1/hadolint-linux-x86_64",
+      "sha256": "c7187db94eeeeca956519a6af171adc31453941a1e777961f6e680f697c8c507",
+      "sha256_sources": [
+        "checksum_file",
+        "github_api_digest"
+      ],
+      "kind": "binary",
+      "member": null,
+      "size": 55661096
+    },
+    {
+      "name": "zizmor",
+      "version": "v1.32.0",
+      "repo": "zizmorcore/zizmor",
+      "published_at": "2026-11-02T23:57:55Z",
+      "url": "https://github.com/zizmorcore/zizmor/releases/download/v1.32.0/zizmor-x86_64-unknown-linux-gnu.tar.gz",
+      "sha256": "bb110cc765eca9cd7efb2e284a956be5974c60027b0970f16397d86208a9957b",
+      "sha256_sources": [
+        "github_api_digest"
+      ],
+      "kind": "tar.gz",
+      "member": "zizmor",
+      "size": 9418466
+    }
+  ]
+}

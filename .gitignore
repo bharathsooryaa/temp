@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Secrets never belong in the workspace
+.env
+.env.*
+*.pem
+*.key
+
+# Generated run artifacts (scanner output, SBOMs, evidence DBs) are added per step
+/runs/
+/cache/
+
+# Pinned tool binaries are reproduced from tools/manifest.json by scripts/install_tools.py
+/tools/bin/
+/tools/downloads/
+
+# Cloned sample apps (pinned by SHA in targets/targets.json)
+/targets/*/

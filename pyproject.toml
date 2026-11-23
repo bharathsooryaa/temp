@@ -1,0 +1,43 @@
+[project]
+name = "supply-chain-guardian"
+version = "0.1.0"
+description = "Evidence-first software supply chain risk guardian (Day 1: contracts)."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pydantic>=2.9,<3",
+    "deepagents==0.7.38",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<10",
+    "ruff>=0.8,<1",
+]
+
+[tool.uv]
+# Supply-chain cooldown (DECISIONS D2-01, D8-01): resolve only releases at least 7 days old.
+exclude-newer = "2026-11-16T00:00:00Z"
+
+[build-system]
+requires = ["uv_build>=0.9,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "guardian"
+module-root = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["integration: needs pinned tools in tools/bin and cloned targets"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "S", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
