@@ -578,3 +578,16 @@ Publication outcome (not a success):
 - GitHub plugin discovery found an available, unconnected integration; suggested
   it rather than requesting a pasted token or reading private key/token stores.
 - No push success claimed. Authentication is the remaining prerequisite.
+
+Token-authenticated retry (2026-11-23):
+
+- User explicitly authorized the supplied credential for the requested push.
+- Hidden terminal input and process-only Git HTTP header used; no token in command
+  arguments, remote URL, project files, or persisted Git configuration. Captured
+  output redacted before display; tracing disabled and credential helper bypassed.
+- GitHub returned HTTP 403, permission denied to the recognized bharathsooryaa
+  account for bharathsooryaa/temp. Push exit 128. This is not a successful push.
+- Credential discarded by the runner; no token file created. User action is
+  required to provide effective write access to the selected repository, normally
+  fine-grained token repository selection plus Contents read/write permission.
+- Prepared source and history remain available in the isolated publication clone.

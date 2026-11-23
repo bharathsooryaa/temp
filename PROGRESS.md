@@ -326,3 +326,11 @@ against GitHub's official host fingerprint in a temporary host-key file. No remo
 write succeeded. A GitHub integration was suggested for supported authentication.
 Current status: push blocked on GitHub authentication; setup launchers remain
 pending and protected workspace Git metadata is unchanged.
+
+Token-authenticated retry: the user supplied a GitHub credential and explicitly
+authorized its use. It was passed through a hidden prompt and a process-only
+HTTPS authentication header, never a remote URL or persisted Git configuration.
+GitHub recognized bharathsooryaa but denied the push with HTTP 403 (permission
+denied for bharathsooryaa/temp). The runner discarded the credential. No push
+succeeded; effective repository write permission is still required. The user was
+advised to revoke the credential shared in chat. Do not record its value.
