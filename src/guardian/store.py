@@ -89,6 +89,16 @@ def connect(db: str | Path = DEFAULT_DB) -> sqlite3.Connection:
     return conn
 
 
+def connect_readonly(db: str | Path = DEFAULT_DB) -> sqlite3.Connection:
+    """Read-only connection (SQLite URI mode=ro); writes raise sqlite3.OperationalError."""
+    path = jail(db)
+    if not path.exists():
+        raise FileNotFoundError(f"no store at {db}")
+    conn = sqlite3.connect(f"{path.as_uri()}?mode=ro", uri=True, check_same_thread=False)
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+
 def save_run(
     conn: sqlite3.Connection, run_id: str, summary: dict, fs: FindingSet, graph: DependencyGraph
 ) -> None:

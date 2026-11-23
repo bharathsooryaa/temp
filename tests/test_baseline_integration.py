@@ -89,6 +89,15 @@ def test_nodegoat_offline_baseline():
     assert len(accepted_explanations(conn, run_id)) == 8
     conn.close()
 
+    # D1.S9: the Day 1 checklist evaluated on this real run.
+    from guardian.checklist import evaluate
+
+    items = {i.n: i for i in evaluate(run_id, "runs/pytest-d1s4/guardian.db")}
+    assert all(items[n].status == "pass" for n in range(1, 10)), [
+        (i.n, i.evidence) for i in items.values() if i.status == "fail"
+    ]
+    assert items[10].status == items[11].status == "n/a"
+
     v = verify_run(out)
     assert v.failures == []
     assert v.rate == 1.0

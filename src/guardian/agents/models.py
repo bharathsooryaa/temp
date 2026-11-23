@@ -87,7 +87,7 @@ def provider_key(model: BaseChatModel) -> str | None:
 TYPE_WORDS = {
     "vulnerable_direct": "A known vulnerability in a direct dependency",
     "vulnerable_transitive": "A known vulnerability in a transitive dependency",
-    "malicious_package": "A package listed in a malicious-package advisory",
+    "malicious_package": "package advisory",
     "vulnerable_image_package": "A known vulnerability in a container image package",
 }
 SCANNERS = {"grype", "trivy", "osv-scanner"}
