@@ -619,3 +619,11 @@ test fixture; exclude runtime artifacts, caches, dependencies and secrets. Prese
 all existing commits. Use a separate temporary clone for new commits and a normal
 main-branch push; do not modify protected workspace .git, change its origin, merge
 automatically, force-push, or implement unapproved launchers.
+
+## Publish-02 Verified publication after authorized retry (2026-11-23)
+
+A later user-authorized credential successfully authenticated the normal main
+push to bharathsooryaa/temp. Remote main matched the prepared source commit after
+push. Record the successful outcome without erasing earlier failure evidence.
+The credential remains transient and is not written into the repository or Git
+configuration. The launchers remain a separate, unapproved implementation step.

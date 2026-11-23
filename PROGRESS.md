@@ -334,3 +334,31 @@ GitHub recognized bharathsooryaa but denied the push with HTTP 403 (permission
 denied for bharathsooryaa/temp). The runner discarded the credential. No push
 succeeded; effective repository write permission is still required. The user was
 advised to revoke the credential shared in chat. Do not record its value.
+
+## Publication completed: bharathsooryaa/temp (2026-11-23)
+
+The user authorized another credential retry. The normal, non-forced push to
+https://github.com/bharathsooryaa/temp.git succeeded on main. Independent ls-remote
+verification returned ba05f5cf8379fb715d310617600f4e54d599c20c, exactly matching
+the prepared source checkout at that point. Earlier failed attempts above are
+historical, not the current publication status. This verification record is
+committed afterward as an audit-only follow-up.
+
+The publication includes the completed real DeepSeek demo source and RUN.md,
+preserves all existing commits, and excludes secrets, environments, downloaded
+scanners, caches and generated demo results. Root workspace .git, HEAD and origin
+remain unchanged. No setup.sh/setup.bat was implemented: the user requested
+pushing first; the proposed launcher step still needs its separate approval.
+
+| Closeout field | Result |
+|---|---|
+| Project / Phase / Day / Step | BGSW / Phase 1 / Day 1 / explicitly authorized source publication (no implementation-step advancement) |
+| Status / Objective | Published current source to requested GitHub repository |
+| Implementation Summary / Files Changed | Source snapshot and existing history published through isolated temporary clone; status, decision, setup and test documentation updated |
+| Tools and Dependencies | Existing Git/Python only; no new packages or live model calls |
+| Tests and Validation | Source/history credential-pattern checks, excluded-path check, Ruff/diff checks; successful push and matching remote main SHA |
+| Problems Encountered | Initial credential transports and first supplied token rejected; later authorized token succeeded |
+| Architectural Decisions | No force push, protected workspace metadata unchanged, credentials process-only, no launchers implemented |
+| Progress Update | Repository published; source demo complete; launchers pending |
+| Next Proposed Step | Previously proposed Day 1, Step 10: reviewed idempotent setup launchers and documentation |
+| Approval Required | None for this completed push; separate approval before launcher implementation. Review or changes may be requested. |

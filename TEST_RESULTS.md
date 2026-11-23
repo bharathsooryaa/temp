@@ -591,3 +591,19 @@ Token-authenticated retry (2026-11-23):
   required to provide effective write access to the selected repository, normally
   fine-grained token repository selection plus Contents read/write permission.
 - Prepared source and history remain available in the isolated publication clone.
+
+## Successful publication retry (2026-11-23)
+
+- User explicitly authorized another credential for the original push request.
+  Credential passed through hidden terminal input and process-only Git HTTP
+  authentication; no raw value printed or persisted in project files, URLs, or
+  Git configuration.
+- `git push https://github.com/bharathsooryaa/temp.git HEAD:refs/heads/main` from
+  the isolated publication checkout: **exit 0**, new main branch created.
+- Authenticated `git ls-remote ... refs/heads/main`: exact match to
+  **ba05f5cf8379fb715d310617600f4e54d599c20c** at first successful publication.
+- Existing history retained; no force, merge, deployment, or package publication.
+  Protected workspace Git metadata and original remote configuration unchanged.
+- An audit-only follow-up commit records the verified publication; its final SHA
+  and remote verification are reported in the assistant's final response.
+- Setup launchers were not implemented; the user explicitly asked to push first.

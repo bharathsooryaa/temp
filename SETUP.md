@@ -182,3 +182,11 @@ opt-in are described in `LLM_PROVIDERS.md`.
 
 - The Docker daemon. The CLI exists, but `/var/run/docker.sock` is missing. NodeGoat's own
   image cannot be built until it runs; the base image is scanned instead.
+
+## Published source repository (2026-11-23)
+
+Current source is published at https://github.com/bharathsooryaa/temp on main.
+The GitHub repository contains source and instructions, not local dependency
+environments, cached databases, scanner downloads, credentials, or generated runs.
+The proposed setup.sh/setup.bat launchers have not been implemented or published;
+follow the manual setup and RUN.md until that separate step is approved.
