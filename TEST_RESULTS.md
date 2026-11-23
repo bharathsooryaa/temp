@@ -607,3 +607,14 @@ Token-authenticated retry (2026-11-23):
 - An audit-only follow-up commit records the verified publication; its final SHA
   and remote verification are reported in the assistant's final response.
 - Setup launchers were not implemented; the user explicitly asked to push first.
+
+Concurrent-source check before final publication:
+
+- Root HEAD was observed at 5a0785c81cc779c84b050bd190545b3eda99b52e instead
+  of the initial f46179b. `git show --stat` identifies a separately added one-line
+  README.md. The check asserting unchanged root HEAD returned false; publication
+  commands operated only on the isolated clone and did not write root metadata.
+- Preserve the new README content unchanged in the publication snapshot through a
+  normal additional commit. No automatic merge or history rewrite is performed.
+- The documentation-only audit push succeeded, and remote main independently
+  matched c2f980772edcac51bd20c03b8152b940fb9b99aa before this README follow-up.

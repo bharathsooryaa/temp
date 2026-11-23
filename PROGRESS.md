@@ -346,8 +346,7 @@ committed afterward as an audit-only follow-up.
 
 The publication includes the completed real DeepSeek demo source and RUN.md,
 preserves all existing commits, and excludes secrets, environments, downloaded
-scanners, caches and generated demo results. Root workspace .git, HEAD and origin
-remain unchanged. No setup.sh/setup.bat was implemented: the user requested
+scanners, caches and generated demo results. Publication commands do not modify root workspace .git or origin. No setup.sh/setup.bat was implemented: the user requested
 pushing first; the proposed launcher step still needs its separate approval.
 
 | Closeout field | Result |
@@ -362,3 +361,10 @@ pushing first; the proposed launcher step still needs its separate approval.
 | Progress Update | Repository published; source demo complete; launchers pending |
 | Next Proposed Step | Previously proposed Day 1, Step 10: reviewed idempotent setup launchers and documentation |
 | Approval Required | None for this completed push; separate approval before launcher implementation. Review or changes may be requested. |
+
+Concurrent workspace update during publication: root HEAD independently advanced
+to 5a0785c81cc779c84b050bd190545b3eda99b52e ("first commit"), adding README.md.
+The publication commands did not create that workspace commit. Include the user's
+README unchanged in the publication snapshot, without merging branches, rewriting
+remote history, or altering the original workspace Git metadata. The proposed
+full setup documentation/launcher implementation remains unapproved.
