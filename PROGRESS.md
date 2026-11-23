@@ -239,8 +239,80 @@ Outstanding:
 - **Outputs:** `explanations.json`, `explanations.md` and `agent-trace.json` in each run
   directory. Scripted output is labelled "offline scripted template (not an LLM)".
 
-### Next proposed: D1.S9 (not approved)
+### D1.S9: real repository demo (approved scope complete)
+
+The user approved the revised Step 9 demo proposal with "yes" in this session and
+selected `deepseek-flash`. Scope: restore this checkout's environment, pinned scanners,
+unmodified NodeGoat target and caches, run the existing pipeline and UI, install the
+DeepSeek adapter, update relevant tests and documentation. The step approval covers the five-finding live run; an optional monetary ceiling
+was requested but not specified. The user subsequently provided the credential in
+`.env` and explicitly requested migration and removal of that file.
+
+Verified here: checkout starts at `f46179b` with a clean worktree; `.guardian-git`
+is absent, while normal Git read-only status/log works. Python is 3.12.14 and uv is
+0.12.13. The environment and UI dependencies have been restored. Syft generated a
+real SBOM and graph in `runs/demo-deepseek` (422 components, 1,480 nodes, 2,295 edges;
+runtime package sets agree 381/381). The production UI build passed. The available
+suite passed **245 tests**, with two database/seeded integration tests explicitly
+skipped; the offline-only selection passed 243. All six scanners report their pinned
+versions. All three vulnerability databases are restored. The actual full baseline produced
+415 findings (324 dependency, 70 image-package, and 21 anomaly/posture findings),
+zero unmapped findings, and 10,127/10,127 resolved cited facts. SQLite integrity is
+ok and the foreign-key check is empty. The real baseline integration test passed
+separately (1 passed in 25.72s).
+
+The built UI and read-only API are running on http://127.0.0.1:8000; HTTP checks
+passed for the page, runs, findings, evidence card, dependency graph and checklist.
+The live `deepseek:deepseek-flash` run finished successfully: **5 accepted explanations,
+0 rejected attempts, 0 blocked tool calls, 7 recorded specialist-tool calls**. The
+export and all five stored explanations were independently re-gated; source
+verification remains 10,127/10,127. HTTP evidence cards now return the actual live
+provider/model. The checklist shows **9 pass / 1 fail / 2 n/a**; only README.md is
+missing (outside the approved scope). The requested real scanner + LLM demo is
+complete; this is not a claim that every Day 1 submission requirement is complete.
+
+At the user's explicit request, the single credential assignment in `.env` was
+parsed as data (never sourced or executed), mapped to `DEEPSEEK_API_KEY` in the
+live child process environment, and `.env` was deleted before the call. The parent
+redacted captured output before displaying it and discarded its in-memory copy at
+exit. No replacement key file or key-bearing documentation was created. Future
+processes need the key supplied again through their environment/hidden prompt.
+
+`RUN.md` documents the real run, hidden terminal key entry, and local UI. CLI provider
+and model must now be explicit; no scripted demo fallback is available. Stale tests
+now inject their scripted fixture from `tests/`, never production model selection.
+
+### D1.S9 closeout report
+
+| Required field | Result |
+|---|---|
+| Project | Software Supply Chain Guardian / BGSW |
+| Phase | Phase 1: discovery, detection and analysis |
+| Day / Step / Status | Day 1 / Step 9 / approved demo scope complete |
+| Objective | Demonstrate real repository findings with live DeepSeek explanations |
+| Implementation Summary | Restore pinned target, scanners/caches, API/UI; configure live DeepSeek; migrate user-provided key into process environment and delete .env |
+| Files Changed | API provider/CLI, dependency manifest/lock, related tests and test fixture, .gitignore, image acquisition record, RUN.md and project status/setup/provider/decision/test documentation; generated run/store/UI artifacts ignored |
+| Tools and Dependencies | Existing six scanners, Python 3.12, FastAPI/UI stack; approved langchain-deepseek 1.2.0 and five provider-related locked additions; no new dependency for credential cleanup |
+| Tests and Validation | 245-test available suite, separate real baseline integration; UI build; 415 findings; 10,127/10,127 citations; 5/5 live explanations re-gated; SQLite and HTTP checks; Ruff and Git diff checks |
+| Problems Encountered | Sandbox DNS/bind restrictions; overlapping download rejected by hash; slow Trivy download exceeded default timeout; stale model tests; noncanonical credential label parsed safely; all addressed within approved scope |
+| Architectural Decisions | Deterministic facts and scores; explicit provider/model, bounded requests, no fallback; credential process-only and no persistent replacement; no target remediation |
+| Progress Update | Actual scan and live LLM demo complete; checklist 9 pass / 1 fail / 2 n/a; README remains missing |
+| Next Proposed Step | Day 1, Step 10: write README describing the verified target, setup, tools and demo; update status docs and rerun checklist; documentation-only, no new dependencies; risk is documentation accuracy; verify expected 10 pass / 0 fail / 2 n/a |
+| Approval Required | None for completed work. Explicit separate approval required before executing proposed Step 10. Review or changes may be requested. |
+
+### Previously proposed D1.S9 scope
 
 FastAPI read-only API over the SQLite store, an evidence-card view with dependency-path
 highlight, and the Day 1 self-checklist run. Separately: approval of a real LLM provider for
 live explanations.
+
+## Authorized push to bharathsooryaa/temp (2026-11-23)
+
+The user requested publishing this repo with setup launchers, then explicitly
+steered: "push it first". This authorizes committing and pushing the existing
+source/demo changes to https://github.com/bharathsooryaa/temp.git now. Launcher
+implementation remains pending its proposed Day 1, Step 10 approval. The destination
+advertised no branches on inspection. Publication uses an isolated temporary
+checkout to preserve protected workspace .git and the existing origin remote.
+Source and history checks exclude credential files and generated/cache artifacts.
+Push success is recorded after remote verification.

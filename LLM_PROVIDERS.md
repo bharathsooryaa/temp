@@ -1,7 +1,29 @@
 # LLM providers
 
-Status on 2026-11-23: **no external model has been called.** All agent runs used the offline
-scripted model.
+## Current real-demo setup (2026-11-23)
+
+The production model module no longer contains a scripted model. Historical scripted
+results below remain historical; the fixture now lives only under `tests/`.
+The CLI requires explicit `--provider` and `--model`. For the approved demo the user
+selected `--provider deepseek --model deepseek-flash`, with at most five findings.
+
+Installed: langchain-deepseek 1.2.0, langchain-openai 1.8.0, openai 3.51.0.
+DeepSeek reads `DEEPSEEK_API_KEY`; a missing key fails before client construction.
+`GUARDIAN_ALLOW_EXTERNAL_MODELS=1` and user authorization remain required.
+The approved live run completed: **5/5 accepted explanations**, no rejected
+attempts, no blocked tool calls. The user provided the key in `.env` and explicitly
+requested migration/removal. A one-time runner parsed that assignment as data,
+loaded `DEEPSEEK_API_KEY` into the child environment, deleted `.env`, and discarded
+the in-memory credential on exit. No persistent replacement was created.
+Future processes require a fresh environment variable or hidden terminal prompt
+(RUN.md); they do not automatically retain the key from this completed run.
+
+DeepSeek requests use a 60-second timeout, zero automatic retries and a 2,048-token
+output limit. These do not enforce a dollar budget. The existing DeepInfra adapter
+is preserved, but it is not selected or authorized as a fallback for this demo.
+
+Status on 2026-11-23: **the real DeepSeek Flash demo has completed successfully**.
+Earlier agent test runs used an explicitly injected offline fixture.
 
 ## Policy
 
@@ -26,21 +48,20 @@ scripted model.
 
 | `--provider` | Backed by | Package | Installed | Notes |
 |---|---|---|---|---|
-| `scripted` (default) | `ScriptedModel` in this repo | none | yes | Offline, deterministic template. **Not an LLM**; labelled as such in every output |
-| `scripted-hallucinating` | `ScriptedModel(mode="hallucinate")` | none | yes | Test fixture that invents an advisory and a citation. The gate must reject all of it |
+| `scripted` / `scripted-hallucinating` | Test-only fixture | none | tests only | Not selectable by production provider construction |
 | `anthropic` | `init_chat_model(..., model_provider="anthropic")` | `langchain-anthropic` 1.7.10 | yes (pulled in by deepagents) | Needs `ANTHROPIC_API_KEY` |
 | `google_genai` | `init_chat_model(..., model_provider="google_genai")` | `langchain-google-genai` 4.5.0 | yes (pulled in by deepagents) | Needs a Google API key |
-| `openai` | `init_chat_model(..., model_provider="openai")` | `langchain-openai` | **no**: adding it needs approval | |
-| `deepseek` | `init_chat_model(..., model_provider="deepseek")` | `langchain-deepseek` | **no**: needs approval | |
+| `openai` | `init_chat_model(..., model_provider="openai")` | `langchain-openai` | yes (DeepSeek transitive dependency) | Not authorized for this demo |
+| `deepseek` | `init_chat_model(..., model_provider="deepseek")` | `langchain-deepseek` 1.2.0 | yes | Approved model: `deepseek-flash`; needs `DEEPSEEK_API_KEY` |
 | `ollama` | `init_chat_model(..., model_provider="ollama")` | `langchain-ollama` | **no**: needs approval | Local; still requires the opt-in |
-| `openai_compatible` | OpenAI client with `--base-url` | `langchain-openai` | **no**: needs approval | Custom endpoints |
+| `openai_compatible` | OpenAI client with `--base-url` | `langchain-openai` | yes (DeepSeek transitive dependency) | Custom endpoints require their own authorization |
 
 ## Example (only after authorization)
 
 ```bash
 export ANTHROPIC_API_KEY=...            # set outside the workspace, never committed
 GUARDIAN_ALLOW_EXTERNAL_MODELS=1 uv run --locked python -m guardian.agents analyze \
-  --run runs/d1s7 --provider anthropic --model <model-id> --limit 10
+  --run runs/d1s7 --provider anthropic --model <model-id> --limit 5
 ```
 
 Paid calls cost money and send finding data to the provider. Each provider and model choice

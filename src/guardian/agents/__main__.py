@@ -1,7 +1,9 @@
 """CLI:
-  uv run --locked python -m guardian.agents analyze --run runs/d1s7 [--limit 10]
-  uv run --locked python -m guardian.agents run --target nodegoat --out runs/d1s8
-Both default to the offline scripted model. Real providers: --provider/--model, and only with
+  python -m guardian.agents analyze --run runs/demo-deepseek \
+      --provider deepseek --model deepseek-flash --limit 5
+  python -m guardian.agents run --target nodegoat --out runs/demo-deepseek \
+      --provider deepseek --model deepseek-flash --limit 5
+Both require an explicit live --provider/--model, and only run with
 GUARDIAN_ALLOW_EXTERNAL_MODELS=1 (see LLM_PROVIDERS.md).
 """
 
@@ -103,16 +105,18 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("analyze", "run"):
         s = sub.add_parser(name)
         s.add_argument("--db", default=DEFAULT_DB)
-        s.add_argument("--provider", default="scripted")
-        s.add_argument("--model", default="scripted-v1")
+        s.add_argument("--provider", required=True)
+        s.add_argument("--model", required=True)
         s.add_argument("--base-url")
-        s.add_argument("--limit", type=int, default=10)
+        s.add_argument("--limit", type=int, default=5)
         if name == "analyze":
             s.add_argument("--run", required=True, help="stored run id, e.g. runs/d1s7")
         else:
             s.add_argument("--target", required=True)
             s.add_argument("--out", required=True)
     a = p.parse_args(argv)
+    if not 1 <= a.limit <= 5:
+        p.error("--limit must be between 1 and 5 for the live demo")
     cfg = ModelConfig(provider=a.provider, model=a.model, base_url=a.base_url)
 
     if a.cmd == "analyze":

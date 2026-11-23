@@ -72,6 +72,7 @@ def test_nodegoat_offline_baseline():
     from guardian.agents.orchestrator import run_agents
     from guardian.agents.tools import AgentContext
     from guardian.store import accepted_explanations
+    from scripted_model import ScriptedModel
 
     run_id = s["store"]["run_id"]
     actx = AgentContext(
@@ -83,7 +84,7 @@ def test_nodegoat_offline_baseline():
         run_id=run_id,
         max_findings=8,
     )
-    outcome = run_agents(actx, ModelConfig(), "analyze")
+    outcome = run_agents(actx, ModelConfig(), "analyze", model=ScriptedModel())
     assert outcome["blocked_tool_calls"] == []
     conn = connect("runs/pytest-d1s4/guardian.db")
     assert len(accepted_explanations(conn, run_id)) == 8

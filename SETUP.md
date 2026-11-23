@@ -1,5 +1,40 @@
 # Setup
 
+## Current checkout restoration (2026-11-23)
+
+This checkout is `/home/bharath_sooryaa/Documents/side_proj/BGSW`; older paths below
+describe the previous environment. Here Python 3.12.14, uv 0.12.13, Node 22.22.2,
+and npm 9.2.0 were verified. `.guardian-git` is absent. Git status/log can be read
+normally; protected `.git` is not modified.
+
+```bash
+uv sync --locked --python python3.12 --no-python-downloads --no-build --cache-dir .cache/uv
+```
+
+`uv add langchain-deepseek` was approved for the real demo and resolved 1.2.0;
+`uv.lock` also adds langchain-openai 1.8.0, openai 3.51.0, regex 2026.11.15, and
+tiktoken 0.14.0. Existing dependency versions were preserved. Registry dependencies
+were installed from wheels; only this trusted local project was built. The local
+cache `.cache/` is ignored. Network downloads require the managed runtime's network
+approval; sandbox DNS failures are not missing-package evidence.
+
+UI restoration used `npm ci --ignore-scripts --cache ../.cache/npm --no-audit
+--no-fund` from `ui/`. `npm run build` passed with a bundle-size warning.
+
+See RUN.md for the real scanner → DeepSeek → local UI demo. Do not use the old
+scripted CLI commands below: production provider and model selection are explicit.
+For database provisioning on a slow connection, Trivy needs `--timeout 30m
+--no-progress`; its default five-minute timeout interrupted a near-complete download.
+The download timeout does not change the offline scan's network isolation.
+
+## Key handling after the live demo
+
+The user-provided `.env` was consumed only for the explicitly requested migration,
+then deleted. The live child received `DEEPSEEK_API_KEY` through its environment;
+no replacement key file was created. Environment variables set in that child do
+not persist into new terminals or future agent processes. Use RUN.md's hidden
+prompt for future authorized runs. The read-only API/UI needs no provider key.
+
 ## Requirements
 
 - `uv` 0.13.9, installed at `~/.local/bin/uv`.

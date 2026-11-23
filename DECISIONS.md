@@ -1,5 +1,52 @@
 # Decisions
 
+## Demo-03 User-directed credential migration and live acceptance (2026-11-23)
+
+- **Authorization:** user stated the key is in `.env` and instructed moving it to
+  the required place and removing `.env`. This continues the approved five-finding
+  `deepseek-flash` demo; it does not authorize other providers, deployments, or
+  remediation.
+- **Handling:** parse the single assignment as data, never shell-source it. Map
+  the value to `DEEPSEEK_API_KEY` only in the live process environment. Delete
+  `.env` once safely loaded; do not create another persistent credential file.
+  Suppress tracing and redact captured child output. Discard the runner's key
+  reference after the child exits. No key, prefix, or fingerprint is documented.
+- **Outcome:** 5 live explanations accepted, 0 rejected, 0 blocked tool calls.
+  All five exports pass a fresh gate check; source citations remain 100% resolved.
+  The UI serves the actual DeepSeek explanations. The approved demo scope is
+  complete. README.md remains a separately approved documentation task.
+
+## Demo-02 Verified demo state (2026-11-23)
+
+The actual unmodified-target baseline passed (415 findings, 10,127/10,127 citations
+resolved) and the existing UI/API are serving on loopback port 8000. Preserve
+scanner-only findings while secure DeepSeek key entry is pending; never fill the
+explanation fields with test templates. README.md is not added in this scope, and
+its checklist item stays failed. The current step is not complete until the live
+model outcome is validated and recorded.
+
+## Demo-01 Real repository and explicitly selected DeepSeek provider (2026-11-23)
+
+- **Approval:** user approved revised Day 1, Step 9 with "yes", then selected
+  `deepseek-flash`. The step approval includes the five-finding paid run. No API key has yet been
+  supplied; an optional monetary spending ceiling remains unspecified.
+- **Scenario:** run the registered unmodified NodeGoat target, not the seeded fork.
+  Preserve scanner evidence; do not prepopulate findings or model explanations.
+- **Provider:** official DeepSeek adapter (`langchain-deepseek==1.2.0`); its required
+  OpenAI adapter and SDK are locked transitively. Existing providers remain available.
+  Explicit CLI `--provider` and `--model` replace stale scripted defaults. Limit the
+  demo CLI to at most five explained findings, with a 60-second request timeout,
+  no automatic request retries, and 2,048 output tokens per DeepSeek request.
+  These bounds do not enforce a currency spending ceiling.
+- **Tests:** move the historical deterministic tool-protocol fixture into `tests/`
+  and inject it explicitly. Offline tests must not construct paid provider clients.
+- **Environment:** restore with installed Python 3.12.14, uv 0.12.13, wheel-only
+  dependency installation and Python downloads disabled. The older uv writes lock
+  format revision 3; existing resolved package versions remain unchanged, with five
+  provider-related packages added. Keep the 2026-11-16 resolution cutoff.
+- **Git evidence:** `.guardian-git` does not exist here; normal Git read-only status
+  and log succeed. No root Git metadata or configuration is modified.
+
 Each entry records the decision, its source, and its approval.
 
 ## D1-01 Orchestration framework: LangChain Deep Agents
@@ -563,3 +610,12 @@ Each entry records the decision, its source, and its approval.
 - **Not covered:** the orchestrator cannot apply patches, publish, or reach the network itself.
   Scanners keep their own `unshare -rn` sandbox. A real LLM provider would make network calls
   only from the model client, after opt-in.
+
+## Publish-01 Explicit destination and preserved workspace metadata (2026-11-23)
+
+The user explicitly requested "push it first" to bharathsooryaa/temp. Publish
+current tracked source and the completed demo changes, including RUN.md and the
+test fixture; exclude runtime artifacts, caches, dependencies and secrets. Preserve
+all existing commits. Use a separate temporary clone for new commits and a normal
+main-branch push; do not modify protected workspace .git, change its origin, merge
+automatically, force-push, or implement unapproved launchers.

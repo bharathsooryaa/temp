@@ -5,7 +5,7 @@ explains them through tool calls, and a deterministic gate validates every claim
 offline/template model in this module.
 
 External calls stay off unless ``GUARDIAN_ALLOW_EXTERNAL_MODELS=1`` is set for the run (D8-02).
-DeepInfra is the configured provider. API keys are read by each provider SDK from its usual
+Providers are selected explicitly by the CLI. API keys are read by each provider SDK from its usual
 environment variable, which is kept outside the workspace and never logged.
 """
 
@@ -66,6 +66,8 @@ def build_model(cfg: ModelConfig) -> BaseChatModel:
         )
 
     provider_id, package = PROVIDERS[cfg.provider]
+    if cfg.provider == "deepseek" and not os.environ.get("DEEPSEEK_API_KEY"):
+        raise ModelDisabledError("DEEPSEEK_API_KEY is not set")
     try:
         __import__(package)
     except ImportError as exc:
@@ -77,6 +79,9 @@ def build_model(cfg: ModelConfig) -> BaseChatModel:
     from langchain.chat_models import init_chat_model
 
     kwargs: dict[str, Any] = {"temperature": cfg.temperature}
+    if cfg.provider == "deepseek":
+        kwargs.update(timeout=60, max_retries=0, max_tokens=2048)
+        kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
     base_url = cfg.base_url or COMPATIBLE_BASE_URLS.get(cfg.provider)
     if base_url:
         kwargs["base_url"] = base_url

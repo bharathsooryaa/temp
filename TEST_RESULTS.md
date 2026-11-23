@@ -1,5 +1,66 @@
 # Test results
 
+## Current checkout: approved real DeepSeek demo preparation (2026-11-23)
+
+Baseline revision `f46179b`, initially clean. No live provider request has been sent.
+DeepSeek model selected by user: `deepseek-flash`. The five-finding paid run is approved; an optional monetary ceiling is unspecified.
+Key availability is pending. This record describes this checkout, not historical runs.
+
+| Command/check | Actual outcome |
+|---|---|
+| `git --git-dir=.guardian-git --work-tree=. status --short` | Failed: metadata absent. Normal read-only `git status --short` succeeds and was initially empty; no Git metadata modified |
+| `rg --files` | Failed: rg unavailable; used find and direct file reads |
+| Python/uv/Node/npm versions | 3.12.14 / 0.12.13 / 22.22.2 / 9.2.0 |
+| `unshare -rn /usr/bin/true` | Exit 0 |
+| Initial sandbox dependency/scanner/target downloads | Failed with DNS errors; rerun through managed network approval |
+| `uv sync --locked --python python3.12 --no-python-downloads --no-build --cache-dir .cache/uv` | Succeeded with approved network access; 69 locked packages including project |
+| `uv add langchain-deepseek --python python3.12 --no-python-downloads --no-build --cache-dir .cache/uv` | Succeeded: 74 resolved packages; five provider-related additions, existing versions unchanged |
+| `npm ci --ignore-scripts --cache ../.cache/npm --no-audit --no-fund` in ui | 44 packages installed |
+| `npm run build` in ui | Passed TypeScript and Vite build; warning: minified JS bundle exceeds 500 kB |
+| NodeGoat checkout | Exact registered commit `c5cb68a7084e4ae7dcc60e6a98768720a81841e8`; made read-only; no target scripts installed or executed |
+| `scripts/fetch_feeds.sh`, `scripts/fetch_toplist.py`, `scripts/fetch_image.py library/node 12-alpine` | Passed; feed hashes recorded; popular list SHA-512 matched, 17,338 names; image blobs digest-verified, 30,083,968 bytes |
+| Scanner installer | Syft, Grype, OSV-Scanner and Trivy installed after matching manifest SHA-256; posture tools still downloading at this checkpoint |
+| Grype first artifact | Rejected and deleted for hash mismatch after overlapping download invocations; redundant downloader stopped; isolated retry passed unchanged pinned hash |
+| `.venv/bin/python -m guardian.sbom build --target nodegoat --out runs/demo-deepseek` | Passed: CycloneDX 1.5, 422 components; graph 1,480 nodes / 2,295 edges / depth 13; runtime package sets agree 381/381 |
+| Initial offline suite | Found stale missing ScriptedModel import; moved historical fixture under tests and explicitly injected it. Optional-adapter test then failed because OpenAI adapter is now installed; test now simulates adapter absence |
+| Sandbox API tests | Stalled in TestClient; process stopped after a successful bounded suite outside restricted runtime |
+| `timeout 120 .venv/bin/pytest -m 'not integration' -q` (approved runtime) | 239 passed, 4 deselected in 1.53s before four additional CLI validation cases |
+| `timeout 120 .venv/bin/pytest tests/test_build_integration.py tests/test_runner.py -q` | 14 passed in 1.00s, including restored Syft/NodeGoat integration |
+| `.venv/bin/ruff check .`, `.venv/bin/ruff format --check .`, `git diff --check` | Passed after new fixture import formatting |
+| External-call refusal check | DeepSeek refused without GUARDIAN_ALLOW_EXTERNAL_MODELS=1; key availability checked as boolean only, currently not set |
+| Ad hoc source-context inspection | Two helper probes failed (missing dockerfile argument; wrong field name); corrected probe returned 12 runtime import names and 3 network facts; no application changes required |
+
+Full scanner baseline, independent citation verification, and live explanation/UI
+acceptance remain pending. Historical vulnerability counts below are not results
+of this new demo run. Four more offline CLI validation cases were added after the
+239-test checkpoint; results are recorded when their run completes.
+
+Further verified preparation:
+
+- Offline suite after CLI tests: **243 passed, 4 deselected in 1.55s**.
+- Final provider tests after selecting non-thinking mode: **28 passed in 1.01s**.
+- Actual ChatDeepSeek client and Deep Agents graph constructed successfully in
+  `unshare -rn` with a dummy key; no model invocation. Reported provider `deepseek`,
+  request timeout 60, retries 0, output tokens 2,048, main tools `{read_file, task}`.
+- All six scanner downloads passed SHA-256 verification and were installed.
+- Database restore commands buffer output. They were restarted with the host CA
+  certificate environment forwarded, before completion. On stopping the first
+  Trivy process its buffered log showed 39.73/136.26 MiB downloaded; it was making
+  progress, not stalled. The restart was unnecessary and is not counted as a
+  successful download. Grype/OSV were also restarted; restoration is still pending.
+- `grype db list -o json` with a 45-second bound succeeded and listed active
+  schema v6.1.10, built 2026-11-23T06:28:32Z.
+- Full available suite (`timeout 120 .venv/bin/pytest -q`): **245 passed, 2 skipped
+  in 2.62s**. Explicit skips: full baseline lacks database caches; seeded integration
+  lacks seeded checkout (not used for this demo). All six `--version` checks match
+  the scanner manifest. Ruff and `git diff --check` pass.
+- The restarted Trivy download reached 131.01/136.26 MiB, then its internal default
+  five-minute timeout failed with `context deadline exceeded`. Retrying with the
+  CLI's documented `--timeout 30m --no-progress`; no cache success claimed yet.
+- DeepSeek adapter finalized as `langchain-deepseek==1.2.0`; offline re-resolution
+  preserves all resolved versions. `uv lock --check --offline --cache-dir .cache/uv`
+  passes (74 packages).
+
 ## D1.S1: contracts and risk scoring (2026-11-23)
 
 Environment: Python 3.12.16 (uv-managed), pydantic 2.14.4, pytest 9.2.0, ruff 0.17.6.
@@ -420,3 +481,86 @@ Environment: Python 3.12.16 (uv-managed), pydantic 2.14.4, pytest 9.2.0, ruff 0.
   "this is easy to exploit") are not machine-checked.
 - **Global profile registry:** the harness-profile registry is process-global. The profile is
   registered per provider key before each build.
+
+Database restoration completed:
+
+- Trivy succeeded with the longer timeout: database v2, updated
+  2026-11-23T07:04:04.632673631Z, about 1.7 GB expanded.
+- Grype database update succeeded; about 3.4 GB expanded.
+- OSV loaded the cached npm all.zip (about 212 MB). Its exit 1 means findings
+  present; the database-load message confirms download completion.
+- Kernel-isolated Trivy preflight over the actual NodeGoat target: 325 vulnerability
+  records across 133 distinct package/version pairs; raw output saved as
+  runs/demo-deepseek/trivy-preflight.json. Full correlation and verification pending.
+
+Real baseline and local UI acceptance (this checkout):
+
+- `.venv/bin/python -m guardian.scan baseline --target nodegoat --out runs/demo-deepseek`:
+  exit 0; **415 findings**, including 324 dependency findings (93 runtime / 231 dev-only),
+  70 image-package findings, and 21 anomaly/posture findings. Raw matches: Grype 340,
+  Trivy 325, OSV 313. No unmapped findings; 1,471 evidence records.
+- Independent verification: **10,127/10,127 cited facts resolved (100%)**.
+- Risk bands: Critical 1 (confirmed-malicious override), Medium 97, Low 317.
+  Scanner severity labels are distinct from computed risk bands.
+- SQLite `PRAGMA integrity_check`: ok; `foreign_key_check`: no rows.
+  Explanations table is empty. No live LLM explanation has been generated.
+- `timeout 120 .venv/bin/pytest tests/test_baseline_integration.py::test_nodegoat_offline_baseline -q`:
+  **1 passed in 25.72s**. This test uses an explicit offline model fixture in a
+  separate test database; its explanations are not demo data.
+- API bind initially refused inside sandbox. Approved loopback launch succeeded:
+  `.venv/bin/python -m guardian.api --host 127.0.0.1 --port 8000`.
+- Actual HTTP checks: UI, `/api/runs`, findings list, evidence card,
+  `/api/graph/F-001`, and checklist return 200; required security headers present.
+  Runs endpoint returns the real demo run with 415 findings; explanation is null.
+  An initial probe used a nonexistent `/api/graph` route (404); corrected to the
+  documented `/api/graph/{fid}` route without an application change.
+- Checklist: **8 pass / 2 fail / 2 n/a**. Pending: live grounded explanations and
+  README.md (not included in this approved scope). No complete Day 1 claim.
+- No browser visual inspection performed; UI build and actual HTTP/API serving verified.
+- Live five-finding DeepSeek run remains pending secure key entry. The user's
+  approval covers this run; no additional implementation approval is requested.
+
+
+## Live DeepSeek acceptance and requested .env cleanup (2026-11-23)
+
+Authorization: original five-finding live demo approval, selected `deepseek-flash`,
+then explicit instruction to use the credential in `.env` and remove that file.
+
+- The source had one non-comment credential assignment with a noncanonical label.
+  Canonical-name-only preflight refused it without printing or deleting anything.
+  The single assignment's value was then safely parsed without shell evaluation,
+  mapped to `DEEPSEEK_API_KEY` in a child environment, and `.env` removed. No key,
+  fingerprint, or raw credential content was logged or written to another file.
+- Live analysis against `runs/demo-deepseek` with `deepseek:deepseek-flash`, limit 5:
+  **exit 0, 5 accepted, 0 rejected attempts, 0 blocked tool calls, 7 specialist-tool
+  calls**. Captured output was redacted by the runner before display. The runner
+  discarded its key reference after the child exited; future processes need fresh
+  key entry. No production source or dependencies changed for this cleanup.
+- Revalidated every exported explanation with `gate()` against the actual findings:
+  **5/5 accepted**. Export explicitly records `generator: language model` and the
+  requested provider/model. The SQLite store contains exactly five accepted
+  explanations for this run, all `deepseek:deepseek-flash`.
+- Independent raw-evidence verification: **10,127/10,127**, zero failures.
+- SQLite integrity: **ok**. Filesystem check: `.env` is absent.
+- HTTP `/api/findings/F-001?run=runs%2Fdemo-deepseek`: **200**, actual DeepSeek
+  provider/model and language-model generator served to the existing UI.
+- HTTP checklist: **200**, **9 pass / 1 fail / 2 n/a**. Item 9 (grounded AI
+  recommendations) passes. Only item 12 (README.md) remains failed, outside this
+  approved scope. No full Day 1 submission-completion claim.
+- Relevant earlier verification remains valid: 245-test available suite, separate
+  real-baseline integration, production UI build, Ruff and lockfile checks.
+- Approved demo scope is complete. No repository remediation, deployment,
+  publication, merge, or alternate provider was performed.
+
+## Publication preflight: bharathsooryaa/temp (2026-11-23)
+
+- User explicitly authorized pushing current source first; setup launchers deferred.
+- Destination ls-remote succeeded and advertised no branches.
+- 88 source candidates inspected; ignored generated/cache/secret paths excluded.
+- Credential-pattern inspection found no flags in candidate files; no matched raw
+  values printed. Dotenv files have no tracked history.
+- Existing history inspected before publication; no credential-pattern flags.
+- Configured Git author identity available. Existing main at f46179b is preserved.
+- Ruff and Git diff whitespace checks pass. No code changed in this publication
+  step; earlier implementation tests remain applicable.
+- Commit and remote-push verification outcomes follow after execution.

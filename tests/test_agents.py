@@ -3,6 +3,7 @@
 Everything runs in-process with the offline scripted model, so there are no network calls.
 """
 
+import builtins
 import json
 import shutil
 import sqlite3
@@ -10,8 +11,9 @@ from types import SimpleNamespace
 
 import pytest
 
+from guardian.agents.__main__ import main as agents_main
 from guardian.agents.gate import gate
-from guardian.agents.models import ModelConfig, ModelDisabledError, ScriptedModel, build_model
+from guardian.agents.models import ModelConfig, ModelDisabledError, build_model
 from guardian.agents.orchestrator import MAIN_TOOLS, ToolAllowList, build_guardian_agent, run_agents
 from guardian.agents.tools import MAX_ATTEMPTS, AgentContext, analysis_tools
 from guardian.schemas import (
@@ -31,6 +33,7 @@ from guardian.schemas.risk import Exposure, Reachability
 from guardian.scoring import score_risk
 from guardian.store import accepted_explanations, connect, save_run
 from guardian.tools.runner import WORKSPACE
+from scripted_model import ScriptedModel
 
 DIR = WORKSPACE / "runs" / "pytest-agents"
 DB = "runs/pytest-agents/guardian.db"
@@ -239,7 +242,7 @@ def test_allow_list_middleware_blocks_unknown_tools():
 
 def test_scripted_analyze_run_end_to_end(stored):
     c = ctx()
-    outcome = run_agents(c, ModelConfig(), "analyze")
+    outcome = run_agents(c, ModelConfig(), "analyze", model=ScriptedModel())
     assert outcome["blocked_tool_calls"] == []
     assert "analysis finished" in outcome["final"]
     conn = connect(DB)
@@ -251,7 +254,7 @@ def test_scripted_analyze_run_end_to_end(stored):
 
 
 def test_hallucinating_model_is_fully_rejected(stored):
-    run_agents(ctx(), ModelConfig(provider="scripted-hallucinating"), "analyze")
+    run_agents(ctx(), ModelConfig(), "analyze", model=ScriptedModel(mode="hallucinate"))
     conn = connect(DB)
     assert accepted_explanations(conn, RUN) == {}
     reasons = [json.loads(r[0]) for r in conn.execute("SELECT reasons_json FROM explanations")]
@@ -269,7 +272,7 @@ def test_full_mode_calls_discovery_then_detection(stored):
         detect=lambda t, o, d: calls.append("detect") or {"store": {"run_id": RUN}},
     )
     c.run_id = None
-    outcome = run_agents(c, ModelConfig(), "full")
+    outcome = run_agents(c, ModelConfig(), "full", model=ScriptedModel())
     assert calls == ["discover", "detect"]
     assert "discovery, detection, analysis" in outcome["final"]
     assert c.run_id == RUN
@@ -300,14 +303,79 @@ def test_external_providers_need_explicit_opt_in(monkeypatch):
     with pytest.raises(ModelDisabledError, match="disabled"):
         build_model(ModelConfig(provider="anthropic", model="any"))
     monkeypatch.setenv("GUARDIAN_ALLOW_EXTERNAL_MODELS", "1")
+    original_import = builtins.__import__
+
+    def unavailable(name, *args, **kwargs):
+        if name == "langchain_openai":
+            raise ImportError("simulated missing optional adapter")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", unavailable)
     with pytest.raises(ModelDisabledError, match="not installed"):
-        build_model(ModelConfig(provider="openai", model="any"))  # langchain_openai absent
+        build_model(ModelConfig(provider="openai", model="any"))
     with pytest.raises(ValueError, match="unknown provider"):
         build_model(ModelConfig(provider="nope", model="any"))
 
 
 def test_scripted_model_reports_its_own_provider():
     assert ScriptedModel()._get_ls_params()["ls_provider"] == "guardian"
+
+
+def test_deepseek_requires_key_before_building_client(monkeypatch):
+    monkeypatch.setenv("GUARDIAN_ALLOW_EXTERNAL_MODELS", "1")
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    with pytest.raises(ModelDisabledError, match="DEEPSEEK_API_KEY"):
+        build_model(ModelConfig(provider="deepseek", model="deepseek-flash"))
+
+
+def test_deepseek_configuration_uses_selected_model_without_calls(monkeypatch):
+    import langchain.chat_models
+
+    monkeypatch.setenv("GUARDIAN_ALLOW_EXTERNAL_MODELS", "1")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-placeholder-never-sent")
+    captured = {}
+
+    def fake_init(model, **kwargs):
+        captured.update(model=model, **kwargs)
+        return "client"
+
+    monkeypatch.setattr(langchain.chat_models, "init_chat_model", fake_init)
+    assert build_model(ModelConfig(provider="deepseek", model="deepseek-flash")) == "client"
+    assert captured == {
+        "model": "deepseek-flash",
+        "model_provider": "deepseek",
+        "temperature": 0.0,
+        "timeout": 60,
+        "max_retries": 0,
+        "max_tokens": 2048,
+        "extra_body": {"thinking": {"type": "disabled"}},
+    }
+
+
+@pytest.mark.parametrize("extra", [[], ["--provider", "deepseek"]])
+def test_live_cli_requires_explicit_provider_and_model(extra):
+    with pytest.raises(SystemExit) as exc:
+        agents_main(["analyze", "--run", "runs/missing", *extra])
+    assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("limit", ["0", "6"])
+def test_live_cli_rejects_limit_outside_demo_scope(limit):
+    with pytest.raises(SystemExit) as exc:
+        agents_main(
+            [
+                "analyze",
+                "--run",
+                "runs/missing",
+                "--provider",
+                "deepseek",
+                "--model",
+                "deepseek-flash",
+                "--limit",
+                limit,
+            ]
+        )
+    assert exc.value.code == 2
 
 
 # --- store migration -------------------------------------------------------------------------
